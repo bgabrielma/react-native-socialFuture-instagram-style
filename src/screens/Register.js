@@ -5,8 +5,13 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  Alert
 } from 'react-native'
+
+import { connect } from 'react-redux'
+import * as userActions from '../store/actions/user'
+import { bindActionCreators } from 'redux'
 
 class Register extends Component {
     state = {
@@ -15,7 +20,21 @@ class Register extends Component {
       password: ''
     }
 
+    componentDidUpdate = prevProps => {
+      if (prevProps.isLoading && !this.props.isLoading) {
+        this.setState({
+          name: '',
+          email: '',
+          password: ''
+        })
+
+        this.props.navigation.navigate('Profile')
+      }
+    }
+
     render () {
+      const isValid = this.state.password.length >= 6
+
       return (
         <View style={styles.container}>
           <TextInput placeholder='Nome'
@@ -36,8 +55,10 @@ class Register extends Component {
             value={this.state.password}
             onChangeText={password => this.setState({ password })} />
 
-          <TouchableOpacity onPress={() => {}}
-            style={styles.button}>
+          <TouchableOpacity
+            onPress={() => this.props.createUser(this.state)}
+            style={[styles.button, !isValid ? { backgroundColor: '#AAA' } : null]}
+            disabled={!isValid}>
             <Text style={styles.buttonText}>Salvar</Text>
           </TouchableOpacity>
         </View>
@@ -54,7 +75,16 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 30,
     padding: 10,
-    backgroundColor: '#4286f4'
+    backgroundColor: '#4286f4',
+    borderRadius: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
   },
   buttonText: {
     fontSize: 20,
@@ -71,4 +101,13 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Register
+const mapStateToProps = ({ user }) => {
+  return {
+    isLoading: user.isLoading
+  }
+}
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(userActions, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register)

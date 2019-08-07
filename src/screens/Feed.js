@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 import {
   StyleSheet,
@@ -9,41 +10,28 @@ import {
 import Header from '../components/Header'
 import Post from '../components/Post'
 
-class Feed extends Component {
-    state = {
-      posts: [{
-        id: Math.random(),
-        nickname: 'Rafael Pereira Filho',
-        email: 'rafaelprrfl@gmail.com',
-        image: require('../../assets/imgs/fence.jpg'),
-        comments: [{
-          nickname: 'John Ray Sheldon',
-          comment: 'Stunning'
-        }, {
-          nickname: 'Ana Julia Arruda',
-          comment: 'Foto linda! Aonde é que foi tirada?'
-        }]
-      }, {
-        id: Math.random(),
-        nickname: 'Francisco Leandro Lima',
-        email: 'filima@gmail.com',
-        image: require('../../assets/imgs/bw.jpg'),
-        comments: []
-      }]
-    }
+import * as postActions from '../store/actions/posts'
+import { bindActionCreators } from 'redux'
 
-    render () {
-      return (
-        <View style={styles.container}>
-          <Header />
-          <FlatList
-            data={this.state.posts}
-            keyExtractor={item => `${item.id}`}
-            renderItem={({ item }) =>
-              <Post key={item.id} {...item} /> } />
-        </View>
-      )
-    }
+class Feed extends Component {
+    state = { }
+
+  componentDidMount = () => {
+    this.props.fetchPosts()
+  }
+
+  render () {
+    return (
+      <View style={styles.container}>
+        <Header />
+        <FlatList
+          data={this.props.posts}
+          keyExtractor={item => `${item.id}`}
+          renderItem={({ item }) =>
+            <Post key={item.id} {...item} /> } />
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
@@ -55,4 +43,13 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Feed
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(postActions, dispatch)
+
+const mapStateToProps = ({ posts: { posts } }) => {
+  return {
+    posts
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Feed)

@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import * as postActions from '../store/actions/posts'
+import { bindActionCreators } from 'redux'
 
 import {
   View,
   Text,
   StyleSheet,
   TextInput,
-  TouchableWithoutFeedback as TWF,
-  Alert
+  TouchableWithoutFeedback as TWF
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -18,7 +20,14 @@ class AddComment extends Component {
     }
 
     handleAddComment = () => {
-      Alert.alert('Adicionado!', this.state.comment)
+      this.props.addComment({
+        postId: this.props.postId,
+        comment: {
+          nickname: this.props.name,
+          comment: this.state.comment
+        }
+      })
+      this.setState({ comment: '', editMode: false })
     }
 
     render () {
@@ -79,4 +88,13 @@ const styles = StyleSheet.create({
   }
 })
 
-export default AddComment
+const mapStateToProps = ({ user }) => {
+  return {
+    name: user.name
+  }
+}
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(postActions, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddComment)

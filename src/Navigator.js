@@ -9,6 +9,7 @@ import {
 } from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+import Splash from './screens/Splash'
 import Feed from './screens/Feed'
 import AddPhoto from './screens/AddPhoto'
 import Profile from './screens/Profile'
@@ -46,7 +47,7 @@ const loginOrProfileRouter = createSwitchNavigator({
   Profile: Profile,
   Auth: authRouter
 }, {
-  initialRouteName: 'Profile'
+  initialRouteName: 'Auth'
 })
 
 const MenuRoutes = {
@@ -107,4 +108,10 @@ const MenuConfig = {
 
 const MenuNavigator = createBottomTabNavigator(MenuRoutes, MenuConfig)
 
-export default createAppContainer(MenuNavigator)
+const SplashRouter = createSwitchNavigator({
+  Splash: Splash,
+  App: MenuNavigator
+}, {
+  initialRouteName: 'Splash'
+})
+export default createAppContainer(SplashRouter)

@@ -39,7 +39,9 @@ const styles = StyleSheet.create({
   },
   comment: {
     color: '#555',
-    marginLeft: 5
+    marginLeft: 5,
+    flex: 1,
+    marginRight: 15
   }
 })
 
